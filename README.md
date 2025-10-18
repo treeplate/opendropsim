@@ -1,16 +1,8 @@
 # opendropsim
 
-A new Flutter project.
+This is a simulator for https://www.gaudi.ch/OpenDrop, and also a submission to [opendrop@stevemould.com](https://www.youtube.com/watch?v=rf-efIZI_Dg).
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Written in Dart+Flutter, with the `serial` package for connecting to a physical device.
+This app only works on web.
+First, press space to make a snake, then you can move the snake around with the arrow keys, and press space for an apple to appear.
+If you don't have an OpenDrop device connected, just select any serial port and it should work fine.
