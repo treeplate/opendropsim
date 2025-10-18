@@ -236,6 +236,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  List<(int, int)> snake = [(0, 6)];
+
   KeyEventResult onKeyEvent(FocusNode focusNode, KeyEvent keyEvent) {
     if (keyEvent.logicalKey == LogicalKeyboardKey.space) {
       if (keyEvent is KeyDownEvent) {
@@ -251,34 +253,47 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     }
     if (keyEvent.logicalKey == LogicalKeyboardKey.arrowRight) {
       if (keyEvent is KeyDownEvent) {
-        for ((int, int) water in waters) {
-          if (water.$1 + 1 < gridWidth) {
-            electrodes[water.$1 + water.$2 * gridWidth] = false;
-            electrodes[water.$1 + water.$2 * gridWidth + 1] = true;
-          }
+        if (snake.first.$1 + 1 < gridWidth && !snake.contains((snake.first.$1 + 1, snake.first.$2))) {
+          electrodes[snake.last.$1 + snake.last.$2 * gridWidth] = false;
+          electrodes[snake.first.$1 + snake.first.$2 * gridWidth + 1] = true;
+          setState(() {
+            snake.insert(0, (snake.first.$1 + 1, snake.first.$2));
+            if (!waters.contains(snake.first)) {
+              snake.removeLast();
+            }
+          });
         }
       }
+
       return KeyEventResult.handled;
     }
 
     if (keyEvent.logicalKey == LogicalKeyboardKey.arrowLeft) {
       if (keyEvent is KeyDownEvent) {
-        for ((int, int) water in waters) {
-          if (water.$1 > 0) {
-            electrodes[water.$1 + water.$2 * gridWidth] = false;
-            electrodes[water.$1 + water.$2 * gridWidth - 1] = true;
-          }
+        if (snake.first.$1 > 0 && !snake.contains((snake.first.$1 - 1, snake.first.$2))) {
+          electrodes[snake.last.$1 + snake.last.$2 * gridWidth] = false;
+          electrodes[snake.first.$1 + snake.first.$2 * gridWidth - 1] = true;
+          setState(() {
+            snake.insert(0, (snake.first.$1 - 1, snake.first.$2));
+            if (!waters.contains(snake.first)) {
+              snake.removeLast();
+            }
+          });
         }
       }
       return KeyEventResult.handled;
     }
     if (keyEvent.logicalKey == LogicalKeyboardKey.arrowDown) {
       if (keyEvent is KeyDownEvent) {
-        for ((int, int) water in waters) {
-          if (water.$2 + 1 < gridHeight) {
-            electrodes[water.$1 + water.$2 * gridWidth] = false;
-            electrodes[water.$1 + (water.$2 + 1) * gridWidth] = true;
-          }
+        if (snake.first.$2 + 1 < gridHeight && !snake.contains((snake.first.$1, snake.first.$2 + 1))) {
+          electrodes[snake.last.$1 + snake.last.$2 * gridWidth] = false;
+          electrodes[snake.first.$1 + (snake.first.$2 + 1) * gridWidth] = true;
+          setState(() {
+            snake.insert(0, (snake.first.$1, snake.first.$2 + 1));
+            if (!waters.contains(snake.first)) {
+              snake.removeLast();
+            }
+          });
         }
       }
       return KeyEventResult.handled;
@@ -286,11 +301,15 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
     if (keyEvent.logicalKey == LogicalKeyboardKey.arrowUp) {
       if (keyEvent is KeyDownEvent) {
-        for ((int, int) water in waters) {
-          if (water.$2 > 0) {
-            electrodes[water.$1 + water.$2 * gridWidth] = false;
-            electrodes[water.$1 + (water.$2 - 1) * gridWidth] = true;
-          }
+        if (snake.first.$2 > 0 &&  !snake.contains((snake.first.$1, snake.first.$2 - 1))) {
+          electrodes[snake.last.$1 + snake.last.$2 * gridWidth] = false;
+          electrodes[snake.first.$1 + (snake.first.$2 - 1) * gridWidth] = true;
+          setState(() {
+            snake.insert(0, (snake.first.$1, snake.first.$2 - 1));
+            if (!waters.contains(snake.first)) {
+              snake.removeLast();
+            }
+          });
         }
       }
       return KeyEventResult.handled;
@@ -317,6 +336,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           frontier.add(adder);
         }
       }
+
       while (frontier.isNotEmpty) {
         x = frontier.last.$1;
         y = frontier.last.$2;
@@ -343,7 +363,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           if (y + 1 < gridHeight) {
             add((x, y + 1));
           }
-        } 
+        }
       }
     });
   }
@@ -374,7 +394,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                           child: Container(
                             width: waterSize,
                             height: waterSize,
-                            color: Colors.blue,
+                            color: snake.contains(e) ? Colors.green : Colors.red,
                           ),
                         ),
                       ),
